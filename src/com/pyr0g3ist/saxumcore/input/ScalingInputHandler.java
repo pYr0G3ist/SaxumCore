@@ -17,7 +17,7 @@ public class ScalingInputHandler extends InputHandler {
         Point mouse = super.getRawMouse();
         if (frame.isFullscreen()) {
             mouse.x *= (frame.contentResolution.width / (double) frame.targetResolution.width);
-            mouse.y *= (frame.contentResolution.height / (double) frame.contentResolution.height);
+            mouse.y *= (frame.contentResolution.height / (double) frame.targetResolution.height);
         }
         return mouse;
     }

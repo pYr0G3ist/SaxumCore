@@ -23,7 +23,6 @@ public class RenderFrame extends javax.swing.JFrame {
 
     public Dimension contentResolution;
     public Dimension targetResolution;
-    public Dimension fullscreenResolution;
 
     public RenderFrame(Dimension contentResolution, Dimension targetResolution, Renderer renderer) {
         this.contentResolution = contentResolution;
@@ -62,30 +61,25 @@ public class RenderFrame extends javax.swing.JFrame {
         renderer.stopRendering();
         setVisible(false);
         dispose();
-        Dimension drawResolution;
         if (makeFullscreen) {
             setUndecorated(true);
-            drawCanvas.setPreferredSize(screenDevice.getDefaultConfiguration().getBounds().getSize());
+            targetResolution = screenDevice.getDefaultConfiguration().getBounds().getSize();
+            drawCanvas.setPreferredSize(targetResolution);
             pack();
             setState(Frame.MAXIMIZED_BOTH);
-            if (fullscreenResolution != null) {
-                drawResolution = fullscreenResolution;
-            } else {
-                drawResolution = getSize();
-            }
         } else {
             setUndecorated(false);
+            targetResolution = contentResolution;
             drawCanvas.setPreferredSize(targetResolution);
             pack();
             setState(Frame.NORMAL);
-            drawResolution = targetResolution;
         }
         setLocationRelativeTo(null);
         setVisible(true);
+        toFront();
         drawCanvas.createBufferStrategy(2);
         drawCanvas.requestFocus();
-        toFront();
-        renderer.enableRendering(drawResolution, contentResolution, drawCanvas.getBufferStrategy());
+        renderer.enableRendering(targetResolution, contentResolution, drawCanvas.getBufferStrategy());
     }
 
     public void setMouseVisible(boolean mouseVisible) {
