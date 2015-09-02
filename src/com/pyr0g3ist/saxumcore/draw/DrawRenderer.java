@@ -44,7 +44,7 @@ public class DrawRenderer implements DrawAgent, Renderer {
                     });
 
                     if (!buffer.contentsLost()) {
-                        buffer.show();
+                            buffer.show();
                     } else {
                         System.out.println("Buffer contents lost");
                     }

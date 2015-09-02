@@ -3,7 +3,6 @@ package com.pyr0g3ist.saxumcore;
 import com.pyr0g3ist.saxumcore.draw.DrawRenderer;
 import com.pyr0g3ist.saxumcore.draw.Drawable;
 import com.pyr0g3ist.saxumcore.draw.RenderFrame;
-import com.pyr0g3ist.saxumcore.draw.Renderer;
 import com.pyr0g3ist.saxumcore.input.ScalingInputHandler;
 import com.pyr0g3ist.saxumcore.util.ColorUtil;
 import java.awt.Color;
