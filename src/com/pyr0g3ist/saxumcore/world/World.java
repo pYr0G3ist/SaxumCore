@@ -1,7 +1,6 @@
 package com.pyr0g3ist.saxumcore.world;
 
 import com.pyr0g3ist.saxumcore.entity.Entity;
-import com.pyr0g3ist.saxumcore.input.InputHandler;
 import com.pyr0g3ist.saxumcore.input.ScalingInputHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
@@ -58,34 +57,55 @@ public class World {
 
     private void checkInput() {
         if (inputHandler != null) {
-            if (inputHandler.isKeyDown(KeyEvent.VK_LEFT)) {
-                viewPort.setVelocity(-1, 0, scrollSpeed);
-            } else if (inputHandler.isKeyDown(KeyEvent.VK_RIGHT)) {
-                viewPort.setVelocity(1, 0, scrollSpeed);
-            } else if (inputHandler.isKeyDown(KeyEvent.VK_UP)) {
-                viewPort.setVelocity(0, -1, scrollSpeed);
-            } else if (inputHandler.isKeyDown(KeyEvent.VK_DOWN)) {
-                viewPort.setVelocity(0, 1, scrollSpeed);
-            }
-            if (inputHandler.isKeysDown(KeyEvent.VK_RIGHT, KeyEvent.VK_UP)) {
-                viewPort.setVelocity(1, -1, scrollSpeed);
-            } else if (inputHandler.isKeysDown(KeyEvent.VK_RIGHT, KeyEvent.VK_DOWN)) {
-                viewPort.setVelocity(1, 1, scrollSpeed);
-            } else if (inputHandler.isKeysDown(KeyEvent.VK_LEFT, KeyEvent.VK_DOWN)) {
-                viewPort.setVelocity(-1, 1, scrollSpeed);
-            } else if (inputHandler.isKeysDown(KeyEvent.VK_LEFT, KeyEvent.VK_UP)) {
-                viewPort.setVelocity(-1, -1, scrollSpeed);
-            }
             Point mouse = inputHandler.getMouse();
-            if (mouse.x < 2) {
-                viewPort.setVelocity(-1, 0, scrollSpeed);
-            } else if (mouse.x > viewPort.width - 2) {
-                viewPort.setVelocity(1, 0, scrollSpeed);
-            } else if (mouse.y < 2) {
-                viewPort.setVelocity(0, -1, scrollSpeed);
-            } else if (mouse.y > viewPort.height - 2) {
-                viewPort.setVelocity(0, 1, scrollSpeed);
+            boolean hasSet = false;
+            if (inputHandler.isKeyDown(KeyEvent.VK_LEFT)
+                    || mouse.x < 2) {
+                panView(ScrollDirection.LEFT, hasSet);
+                hasSet = true;
             }
+            if (inputHandler.isKeyDown(KeyEvent.VK_RIGHT)
+                    || mouse.x > viewPort.width - 2) {
+                panView(ScrollDirection.RIGHT, hasSet);
+                hasSet = true;
+            }
+            if (inputHandler.isKeyDown(KeyEvent.VK_UP)
+                    || mouse.y < 2) {
+                panView(ScrollDirection.UP, hasSet);
+                hasSet = true;
+            }
+            if (inputHandler.isKeyDown(KeyEvent.VK_DOWN)
+                    || mouse.y > viewPort.height - 2) {
+                panView(ScrollDirection.DOWN, hasSet);
+            }
+        }
+    }
+
+    public void panView(ScrollDirection direction, boolean additiveVelocity) {
+        switch (direction) {
+            case LEFT:
+                if (viewPort.x < bounds.x) {
+                    return;
+                }
+                viewPort.setVelocity(-1, 0, scrollSpeed, additiveVelocity);
+                return;
+            case RIGHT:
+                if ((viewPort.x + viewPort.width) > bounds.width) {
+                    return;
+                }
+                viewPort.setVelocity(1, 0, scrollSpeed, additiveVelocity);
+                return;
+            case UP:
+                if (viewPort.y < bounds.y) {
+                    return;
+                }
+                viewPort.setVelocity(0, -1, scrollSpeed, additiveVelocity);
+                return;
+            case DOWN:
+                if ((viewPort.y + viewPort.height) > bounds.height) {
+                    return;
+                }
+                viewPort.setVelocity(0, 1, scrollSpeed, additiveVelocity);
         }
     }
 

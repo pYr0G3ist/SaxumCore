@@ -12,12 +12,12 @@ public abstract class Entity implements Intersectable, Disposable {
 
     private double xVelocity = 0;
     private double yVelocity = 0;
-    
+
     public double x;
     public double y;
     public int width;
     public int height;
-    
+
     public double mass = 0;
     public double drag = 0;
     public boolean visible = true;
@@ -61,11 +61,16 @@ public abstract class Entity implements Intersectable, Disposable {
 
     }
 
-    public final void setVelocity(double xDelta, double yDelta, double speed) {
+    public final void setVelocity(double xDelta, double yDelta, double speed, boolean add) {
         double tDelta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
         if (tDelta > 0 && speed > 0) {
-            xVelocity = xDelta / tDelta * speed;
-            yVelocity = yDelta / tDelta * speed;
+            if (add) {
+                xVelocity += xDelta / tDelta * speed;
+                yVelocity += yDelta / tDelta * speed;
+            } else {
+                xVelocity = xDelta / tDelta * speed;
+                yVelocity = yDelta / tDelta * speed;
+            }
         }
     }
 
@@ -75,7 +80,7 @@ public abstract class Entity implements Intersectable, Disposable {
 
     public final void setTargetAndMove(int x, int y, double speed) {
         setTarget(x, y);
-        setVelocity(x, y, speed);
+        setVelocity(x, y, speed, false);
     }
 
     private void checkTargetReached() {
