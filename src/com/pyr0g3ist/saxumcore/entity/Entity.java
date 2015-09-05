@@ -10,8 +10,8 @@ public abstract class Entity implements Intersectable, Disposable {
 
     private boolean disposeLater = false;
 
-    private double xVelocity = 0;
-    private double yVelocity = 0;
+    public double xVelocity = 0;
+    public double yVelocity = 0;
 
     public double x;
     public double y;
@@ -125,28 +125,6 @@ public abstract class Entity implements Intersectable, Disposable {
             xVelocity += xRatio * acceleration;
             yVelocity += yRatio * acceleration;
         }
-    }
-
-    public final void processMomentumCollision(Entity otherEntity) {
-        double m1 = this.mass;
-        double m2 = otherEntity.mass;
-
-        // Adjust speeds based on momentum exchange
-        double thisNewXSpeed = (((m1 - m2) / (m1 + m2)) * this.xVelocity)
-                + (((m2 * 2) / (m1 + m2)) * otherEntity.xVelocity);
-        double thisNewYSpeed = (((m1 - m2) / (m1 + m2)) * this.yVelocity)
-                + (((m2 * 2) / (m1 + m2)) * otherEntity.yVelocity);
-
-        double otherNewXSpeed = (((m2 - m1) / (m1 + m2)) * otherEntity.xVelocity)
-                + (((m1 * 2) / (m1 + m2)) * this.xVelocity);
-        double otherNewYSpeed = (((m2 - m1) / (m1 + m2)) * otherEntity.yVelocity)
-                + (((m1 * 2) / (m1 + m2)) * this.yVelocity);
-
-        this.xVelocity = thisNewXSpeed;
-        this.yVelocity = thisNewYSpeed;
-
-        otherEntity.xVelocity = otherNewXSpeed;
-        otherEntity.yVelocity = otherNewYSpeed;
     }
 
     public boolean intersects(Entity otherEntity) {

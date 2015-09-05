@@ -6,6 +6,7 @@ import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersector;
 import com.pyr0g3ist.saxumcore.intersect.LinearIntersector;
+import com.pyr0g3ist.saxumcore.physics.MomentumIntersectionProcessor;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -19,7 +20,7 @@ public class World {
     private final Rectangle bounds;
     private final ViewPort viewPort;
     private final ScalingInputHandler inputHandler;
-    private Intersector intersector = new LinearIntersector();
+    private Intersector intersector;
 
     private final List<Entity> entities = new ArrayList<>();
     private final List<Entity> visibleEntities = new ArrayList<>();
@@ -35,15 +36,20 @@ public class World {
                 viewPortBounds.y,
                 viewPortBounds.width,
                 viewPortBounds.height);
+        this.inputHandler = inputHandler;
+
         entities.add(viewPort);
         viewPort.intersectionHandlers.add(this::addVisibleEntity);
-        this.inputHandler = inputHandler;
+
+        LinearIntersector linearIntersector = new LinearIntersector();
+        linearIntersector.intersectionProcessors.add(new MomentumIntersectionProcessor());
+        intersector = linearIntersector;
     }
 
     public void update() {
         checkInput();
         visibleEntities.clear();
-        intersector.checkIntersections(entities);
+        intersector.processIntersections(entities);
         List<Entity> removeList = new ArrayList<>();
         entities.stream().forEach((entity) -> {
             if (entity.needsDisposal()) {
@@ -137,6 +143,10 @@ public class World {
         return viewPort;
     }
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
 //============================================================================//
     private class ViewPort extends Entity {
 
@@ -149,6 +159,10 @@ public class World {
 
         @Override
         public void processIntersectionWith(Intersectable intersectable) {
+            if (intersectable instanceof World
+                    || intersectable instanceof World.ViewPort) {
+                return;
+            }
             intersectionHandlers.stream().forEach((intersectionHandler) -> {
                 intersectionHandler.processIntersectionWith(intersectable);
             });

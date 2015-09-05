@@ -1,6 +1,5 @@
 package com.pyr0g3ist.saxumcore.resource;
 
-import com.pyr0g3ist.saxumcore.Core;
 import com.pyr0g3ist.saxumcore.exception.SaxumException;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
@@ -18,6 +17,8 @@ public class ResourceManager {
 
     private static ResourceManager sharedInstance;
 
+    private ClassLoader loader = getClass().getClassLoader();
+
     private ResourceManager() {
     }
 
@@ -32,7 +33,7 @@ public class ResourceManager {
 
     public void addImage(String name, String path) throws SaxumException {
         try {
-            BufferedImage image = ImageIO.read(Core.class.getResourceAsStream(path));
+            BufferedImage image = ImageIO.read(loader.getResourceAsStream(path));
             imageMap.put(name, convertToCompatibleImage(image));
         } catch (IOException ex) {
             throw new SaxumException("Error loading image: " + ex.getMessage());
@@ -44,7 +45,7 @@ public class ResourceManager {
     }
 
     public void addAnimation(String name, String path) throws SaxumException {
-        URL url = Core.class.getResource(path);
+        URL url = loader.getResource(path);
         if (url == null) {
             throw new SaxumException("Error, missing animation folder.");
         } else {
@@ -72,6 +73,10 @@ public class ResourceManager {
                 Transparency.TRANSLUCENT);
         compatableImage.getGraphics().drawImage(source, 0, 0, null);
         return compatableImage;
+    }
+
+    public void setClassLoader(ClassLoader loader) {
+        this.loader = loader;
     }
 
     public static ResourceManager getSharedInstance() {
