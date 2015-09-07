@@ -32,19 +32,19 @@ public abstract class Entity implements Intersectable, Disposable {
         this.height = height;
     }
 
-    public final void update() {
-        x += xVelocity;
-        y += yVelocity;
+    public final void update(double deltaFraction) {
+        x += xVelocity * deltaFraction;
+        y += yVelocity * deltaFraction;
         if (target != null) {
             checkTargetReached();
         }
         if (drag > 0) {
             applyResistance();
         }
-        applyLogic();
+        applyLogic(deltaFraction);
     }
 
-    protected void applyLogic() {
+    protected void applyLogic(double deltaFraction) {
 
     }
 

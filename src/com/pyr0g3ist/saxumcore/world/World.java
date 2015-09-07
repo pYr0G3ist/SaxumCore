@@ -25,7 +25,7 @@ public class World {
     private final List<Entity> entities = new ArrayList<>();
     private final List<Entity> visibleEntities = new ArrayList<>();
 
-    public int scrollSpeed = 8;
+    public int scrollSpeed = 200;
 
     public boolean threadsafe = false;
 
@@ -46,7 +46,7 @@ public class World {
         intersector = linearIntersector;
     }
 
-    public void update() {
+    public void update(double deltaFraction) {
         checkInput();
         visibleEntities.clear();
         intersector.processIntersections(entities);
@@ -55,7 +55,7 @@ public class World {
             if (entity.needsDisposal()) {
                 removeList.add(entity);
             } else {
-                entity.update();
+                entity.update(deltaFraction);
             }
         });
         removeList.stream().forEach(entities::remove);

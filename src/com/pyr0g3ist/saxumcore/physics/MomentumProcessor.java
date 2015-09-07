@@ -17,17 +17,6 @@ public final class MomentumProcessor {
             return;
         }
 
-//        Undo the movement that caused the intersection
-        if (entityA.xVelocity + entityA.yVelocity
-                + entityB.xVelocity + entityB.yVelocity > 0) {
-            while (entityA.getBounds().intersects(entityB.getBounds())) {
-                entityA.x -= entityA.xVelocity;
-                entityA.y -= entityA.yVelocity;
-                entityB.x -= entityB.xVelocity;
-                entityB.y -= entityB.yVelocity;
-            }
-        }
-
 //        Adjust speeds based on momentum exchange
         double thisNewXSpeed = (((m1 - m2) / (m1 + m2)) * entityA.xVelocity)
                 + (((m2 * 2) / (m1 + m2)) * entityB.xVelocity);

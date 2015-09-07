@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
 public class Core {
 
 //===== Properties =============================================================
-    protected int updateRate = 60;
+    protected int updateRate = 200;
     private int updateInterval = 1000000000 / updateRate;
     protected boolean running = true;
     protected boolean showDebug = false;
@@ -65,7 +65,8 @@ public class Core {
             accumulator += elapsedTime;
 
             if (accumulator >= updateInterval) {
-                update();
+                double deltaFraction = updateInterval / 1000000000d;
+                update(deltaFraction);
                 accumulator -= updateInterval;
                 updates++;
                 curTime = System.nanoTime();
@@ -96,8 +97,8 @@ public class Core {
         }
     }
 
-    protected void update() {
-
+    protected void update(double deltaFraction) {
+        
     }
 
     protected void draw(Graphics2D g2) {
