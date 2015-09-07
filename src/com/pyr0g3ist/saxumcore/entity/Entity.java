@@ -5,14 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Entity implements Intersectable, Disposable {
 
-    private boolean disposeLater = false;
-
     public double xVelocity = 0;
     public double yVelocity = 0;
-
     public double x;
     public double y;
     public int width;
@@ -21,6 +20,10 @@ public abstract class Entity implements Intersectable, Disposable {
     public double mass = 0;
     public double drag = 0;
     public boolean visible = true;
+
+    public List<Intersectable> subIntersectables = new ArrayList<>();
+
+    private boolean disposeLater = false;
 
     private Point target;
     private Rectangle bounds;

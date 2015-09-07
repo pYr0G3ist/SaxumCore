@@ -5,7 +5,7 @@ import com.pyr0g3ist.saxumcore.input.ScalingInputHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersector;
-import com.pyr0g3ist.saxumcore.intersect.LinearIntersector;
+import com.pyr0g3ist.saxumcore.intersect.LinearEntityIntersector;
 import com.pyr0g3ist.saxumcore.physics.MomentumIntersectionProcessor;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -41,7 +41,7 @@ public class World {
         entities.add(viewPort);
         viewPort.intersectionHandlers.add(this::addVisibleEntity);
 
-        LinearIntersector linearIntersector = new LinearIntersector();
+        LinearEntityIntersector linearIntersector = new LinearEntityIntersector();
         linearIntersector.intersectionProcessors.add(new MomentumIntersectionProcessor());
         intersector = linearIntersector;
     }
