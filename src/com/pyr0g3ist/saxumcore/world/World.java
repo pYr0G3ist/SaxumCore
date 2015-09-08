@@ -1,12 +1,14 @@
 package com.pyr0g3ist.saxumcore.world;
 
 import com.pyr0g3ist.saxumcore.entity.Entity;
+import com.pyr0g3ist.saxumcore.entity.EntityRegistrar;
 import com.pyr0g3ist.saxumcore.input.ScalingInputHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersector;
 import com.pyr0g3ist.saxumcore.intersect.LinearEntityIntersector;
 import com.pyr0g3ist.saxumcore.physics.MomentumIntersectionProcessor;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class World {
+public class World implements EntityRegistrar {
 
     private final Rectangle bounds;
     private final ViewPort viewPort;
@@ -24,6 +26,7 @@ public class World {
 
     private final List<Entity> entities = new ArrayList<>();
     private final List<Entity> visibleEntities = new ArrayList<>();
+    private final List<Entity> newEntities = new ArrayList<>();
 
     public int scrollSpeed = 200;
 
@@ -49,6 +52,8 @@ public class World {
     public void update(double deltaFraction) {
         checkInput();
         visibleEntities.clear();
+        entities.addAll(newEntities);
+        newEntities.clear();
         intersector.processIntersections(entities);
         List<Entity> removeList = new ArrayList<>();
         entities.stream().forEach((entity) -> {
@@ -116,7 +121,9 @@ public class World {
     }
 
     private void addVisibleEntity(Intersectable intersectable) {
-        visibleEntities.add((Entity) intersectable);
+        if (intersectable instanceof Entity) {
+            visibleEntities.add((Entity) intersectable);
+        }
     }
 
     public void draw(Graphics2D g2, int xOffset, int yOffset) {
@@ -124,6 +131,11 @@ public class World {
             entity.draw(g2, (int) (xOffset - viewPort.x),
                     (int) (yOffset - viewPort.y));
         });
+    }
+
+    @Override
+    public void registerEntity(Entity entity) {
+        newEntities.add(entity);
     }
 
 //===== Getters & Setters ====================================================//

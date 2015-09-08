@@ -27,7 +27,7 @@ public class LinearEntityIntersector implements Intersector {
             if (intersectable instanceof Entity) {
                 List<Intersectable> entityIntersectables = ((Entity) intersectable).subIntersectables;
                 entityIntersectables.stream().forEach((entityIntersectable) -> {
-                    doIntersectWithList(entityIntersectable, intersectables, new boolean[entityIntersectables.size()]);
+                    doIntersectWithList(entityIntersectable, intersectables, new boolean[intersectables.size()]);
                 });
             }
             skip[i] = true;

@@ -22,7 +22,8 @@ public abstract class Entity implements Intersectable, Disposable {
     public boolean visible = true;
 
     public List<Intersectable> subIntersectables = new ArrayList<>();
-
+    public EntityRegistrar entityRegistrar;
+    
     private boolean disposeLater = false;
 
     private Point target;

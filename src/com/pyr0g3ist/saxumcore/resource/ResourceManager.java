@@ -79,7 +79,7 @@ public class ResourceManager {
         this.loader = loader;
     }
 
-    public static ResourceManager getSharedInstance() {
+    public static ResourceManager getInstance() {
         if (sharedInstance == null) {
             sharedInstance = new ResourceManager();
         }
