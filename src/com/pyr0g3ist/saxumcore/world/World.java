@@ -8,7 +8,6 @@ import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersector;
 import com.pyr0g3ist.saxumcore.intersect.LinearEntityIntersector;
 import com.pyr0g3ist.saxumcore.physics.MomentumIntersectionProcessor;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -28,7 +27,7 @@ public class World implements EntityRegistrar {
     private final List<Entity> visibleEntities = new ArrayList<>();
     private final List<Entity> newEntities = new ArrayList<>();
 
-    public int scrollSpeed = 200;
+    public int scrollSpeed = 500;
 
     public boolean threadsafe = false;
 
