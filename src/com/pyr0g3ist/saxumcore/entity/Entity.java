@@ -23,7 +23,7 @@ public abstract class Entity implements Intersectable, Disposable {
 
     public List<Intersectable> subIntersectables = new ArrayList<>();
     public EntityRegistrar entityRegistrar;
-    
+
     private boolean disposeLater = false;
 
     private Point target;
@@ -45,6 +45,7 @@ public abstract class Entity implements Intersectable, Disposable {
         if (drag > 0) {
             applyResistance();
         }
+        nullDisposedReferences();
         applyLogic(deltaFraction);
     }
 
@@ -172,5 +173,9 @@ public abstract class Entity implements Intersectable, Disposable {
     @Override
     public void disposeLater() {
         disposeLater = true;
+    }
+
+    protected void nullDisposedReferences() {
+
     }
 }
