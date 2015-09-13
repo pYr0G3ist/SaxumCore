@@ -19,6 +19,7 @@ public class InputHandler {
     private int LEFT_INSET = 0;
     private boolean mouseDown = false;
     private Point mouse = new Point(-1, -1);
+    private MouseEvent lastMouseRelease;
 
     public InputHandler(Component inputComponent) {
         inputComponent.addKeyListener(keyListener);
@@ -68,13 +69,22 @@ public class InputHandler {
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
+        public void mousePressed(MouseEvent evt) {
+            mouse.x = evt.getPoint().x;
+            mouse.y = evt.getPoint().y;
             mouseDown = true;
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public void mouseReleased(MouseEvent evt) {
+            mouse.x = evt.getPoint().x;
+            mouse.y = evt.getPoint().y;
             mouseDown = false;
+            lastMouseRelease = evt;
+            Point correctedPoint = getMouse();
+            evt.translatePoint(
+                    correctedPoint.x - evt.getX(),
+                    correctedPoint.y - evt.getY());
         }
 
     };
