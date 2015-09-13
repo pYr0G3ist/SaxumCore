@@ -1,5 +1,6 @@
 package com.pyr0g3ist.saxumcore.entity;
 
+import com.pyr0g3ist.saxumcore.input.InputHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -23,6 +24,7 @@ public abstract class Entity implements Intersectable, Disposable {
 
     public List<Intersectable> subIntersectables = new ArrayList<>();
     public EntityRegistrar entityRegistrar;
+    protected InputHandler inputHandler;
 
     private boolean disposeLater = false;
 
@@ -177,5 +179,9 @@ public abstract class Entity implements Intersectable, Disposable {
 
     protected void nullDisposedReferences() {
 
+    }
+
+    public void setInputHandler(InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
     }
 }

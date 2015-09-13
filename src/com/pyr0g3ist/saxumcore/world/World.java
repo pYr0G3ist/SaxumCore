@@ -2,6 +2,7 @@ package com.pyr0g3ist.saxumcore.world;
 
 import com.pyr0g3ist.saxumcore.entity.Entity;
 import com.pyr0g3ist.saxumcore.entity.EntityRegistrar;
+import com.pyr0g3ist.saxumcore.input.InputHandler;
 import com.pyr0g3ist.saxumcore.input.ScalingInputHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
@@ -21,6 +22,7 @@ public class World implements EntityRegistrar {
     private final Rectangle bounds;
     private final ViewPort viewPort;
     private final ScalingInputHandler inputHandler;
+    private WorldSpaceInputHandler worldSpaceInputHandler;
     private Intersector intersector;
 
     private final List<Entity> entities = new ArrayList<>();
@@ -137,7 +139,8 @@ public class World implements EntityRegistrar {
         newEntities.add(entity);
     }
 
-//===== Getters & Setters ====================================================//
+// ===== Getters & Setters =====================================================
+//    
     public void addEntity(Entity entity) {
         entities.add(entity);
     }
@@ -158,7 +161,15 @@ public class World implements EntityRegistrar {
         return bounds;
     }
 
-//============================================================================//
+    public InputHandler getWorldSpaceInputHandler() {
+        if (worldSpaceInputHandler == null) {
+            worldSpaceInputHandler = new WorldSpaceInputHandler(inputHandler);
+        }
+        return worldSpaceInputHandler;
+    }
+
+// ===== ViewPort ==============================================================
+//    
     private class ViewPort extends Entity {
 
         private final List<IntersectionHandler> intersectionHandlers = new ArrayList<>();
@@ -178,6 +189,23 @@ public class World implements EntityRegistrar {
                 intersectionHandler.processIntersectionWith(intersectable);
             });
         }
+    }
+// ===== WorldSpaceInputHandler ================================================
+
+    private class WorldSpaceInputHandler extends ScalingInputHandler {
+
+        public WorldSpaceInputHandler(ScalingInputHandler sourceHandler) {
+            super(inputHandler);
+        }
+
+        @Override
+        public Point getMouse() {
+            Point mouse = super.getMouse();
+            mouse.x += viewPort.x;
+            mouse.y += viewPort.y;
+            return mouse;
+        }
+
     }
 
 }

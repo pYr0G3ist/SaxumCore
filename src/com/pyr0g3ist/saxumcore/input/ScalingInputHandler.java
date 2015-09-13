@@ -12,6 +12,11 @@ public class ScalingInputHandler extends InputHandler {
         this.frame = inputFrame;
     }
 
+    public ScalingInputHandler(ScalingInputHandler scalingInputHandler) {
+        super(scalingInputHandler.frame.getDrawCanvas());
+        this.frame = scalingInputHandler.frame;
+    }
+
     @Override
     public Point getMouse() {
         Point mouse = super.getRawMouse();
