@@ -122,13 +122,13 @@ public abstract class Entity implements Intersectable, Disposable {
 
     public void applyForce(double force, double xDelta, double yDelta) {
         if (mass != 0) {
-            // Calculate acceleration to be applied.
+//             Calculate acceleration to be applied.
             double acceleration = force / mass;
-            // Calculate direction.
+//             Calculate direction.
             double tDelta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
             double xRatio = xDelta / tDelta;
             double yRatio = yDelta / tDelta;
-            // Apply acceleration using direction.
+//             Apply acceleration using direction.
             xVelocity += xRatio * acceleration;
             yVelocity += yRatio * acceleration;
         }

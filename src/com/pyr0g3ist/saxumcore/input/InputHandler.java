@@ -129,4 +129,8 @@ public class InputHandler {
     public String viewPressedKeys() {
         return keyQueue.toString();
     }
+
+    public MouseEvent getLastMouseRelease() {
+        return lastMouseRelease;
+    }
 }
