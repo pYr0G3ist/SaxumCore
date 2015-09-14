@@ -34,7 +34,10 @@ public class LinearEntityIntersector implements Intersector {
         }
     }
 
-    private void doIntersectWithList(Intersectable intersectable, List<? extends Intersectable> intersectables, boolean[] skip) {
+    public void doIntersectWithList(Intersectable intersectable, List<? extends Intersectable> intersectables, boolean[] skip) {
+        if (skip == null) {
+            skip = new boolean[intersectables.size()];
+        }
         for (int j = 0; j < intersectables.size(); j++) {
             if (!skip[j]) {
                 Intersectable compareIntersectable = intersectables.get(j);

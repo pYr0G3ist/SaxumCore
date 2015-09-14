@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JFrame;
 
 public abstract class MouseProxy extends Entity {
@@ -19,22 +20,20 @@ public abstract class MouseProxy extends Entity {
 
 //    ===== Init ===============================================================
 //    
-    public MouseProxy(InputHandler inputHandler, JFrame frame) {
+    public MouseProxy(JFrame frame) {
         super(0, 0, 1, 1);
         this.frame = frame;
-        this.inputHandler = inputHandler;
     }
 
 //    ===== Entity =============================================================
 //    
     @Override
     protected void applyLogic(double deltaFraction) {
-        processItemsUnderMouse();
-        if (inputHandler != null) {
-            Point mouse = inputHandler.getMouse();
-            x = mouse.x;
-            y = mouse.y;
+        if (inputHandler == null) {
+            return;
         }
+        processItemsUnderMouse();
+        refreshMouseLocation();
         if (mouseModifier == null) {
             return;
         }
@@ -46,42 +45,54 @@ public abstract class MouseProxy extends Entity {
                 modifyMouse(mouseModifier, frame, mouseDown);
                 mouseModified = true;
             }
-        }
-        if (mouseModified && !mouseIsOverModifier) {
-            mouseModified = false;
-            mouseModifier = null;
-            resetMouse();
+        } else {
+            if (mouseModified) {
+                mouseModified = false;
+                mouseModifier = null;
+                resetMouse();
+            }
         }
         mouseWasDown = mouseDown;
     }
 
     @Override
-    public void processIntersectionWith(Intersectable intersectable) {
-        if (intersectable instanceof MouseInteractable) {
-            itemsUnderMouse.add((MouseInteractable) intersectable);
-        }
+    protected void processIntersections(Set<Intersectable> intersectables) {
+        intersectables.stream()
+                .filter((intersectable) -> (intersectable instanceof MouseInteractable))
+                .forEach((intersectable) -> {
+                    itemsUnderMouse.add((MouseInteractable) intersectable);
+                });
+    }
+
+    @Override
+    public void setInputHandler(InputHandler inputHandler) {
+        super.setInputHandler(inputHandler);
+        refreshMouseLocation();
     }
 
 //    ===== MouseProxy =========================================================
 //    
+    private void refreshMouseLocation() {
+        Point mouse = inputHandler.getMouse();
+        x = mouse.x;
+        y = mouse.y;
+    }
+
     private void processItemsUnderMouse() {
         if (itemsUnderMouse.isEmpty()) {
-            mouseModifier = null;
             return;
         }
         MouseInteractable topMouseInteractable = itemsUnderMouse.get(0);
         for (MouseInteractable interactable : itemsUnderMouse) {
             interactable.setClickOccurred(MouseEvent.NOBUTTON);
-            if (interactable.getZIndex() > topMouseInteractable.getZIndex()) {
+            if (interactable.getClickIndex().isHigherThan(topMouseInteractable.getClickIndex())) {
                 topMouseInteractable = interactable;
             }
         }
         mouseModifier = topMouseInteractable;
-        if (inputHandler != null) {
-            MouseEvent lastMouseRelease = inputHandler.getLastMouseRelease();
-            if (lastMouseRelease != null && mouseModifier != null) {
-                mouseModifier.setClickOccurred(lastMouseRelease.getButton());
-            }
+        MouseEvent lastMouseRelease = inputHandler.getLastMouseRelease();
+        if (lastMouseRelease != null && mouseModifier != null) {
+            mouseModifier.setClickOccurred(lastMouseRelease.getButton());
         }
         itemsUnderMouse.clear();
     }

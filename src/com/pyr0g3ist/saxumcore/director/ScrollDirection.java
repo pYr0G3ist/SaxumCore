@@ -1,4 +1,4 @@
-package com.pyr0g3ist.saxumcore.world;
+package com.pyr0g3ist.saxumcore.director;
 
 public enum ScrollDirection {
 

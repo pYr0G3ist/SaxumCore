@@ -6,7 +6,7 @@ public interface MouseInteractable {
 
     public Rectangle getBounds();
     
-    public int getZIndex();
+    public ClickIndex getClickIndex();
     
     public void setClickOccurred(int button);
 

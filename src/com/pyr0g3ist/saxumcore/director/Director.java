@@ -1,40 +1,45 @@
-package com.pyr0g3ist.saxumcore.world;
+package com.pyr0g3ist.saxumcore.director;
 
 import com.pyr0g3ist.saxumcore.entity.Entity;
 import com.pyr0g3ist.saxumcore.entity.EntityRegistrar;
 import com.pyr0g3ist.saxumcore.input.InputHandler;
+import com.pyr0g3ist.saxumcore.input.MouseProxy;
 import com.pyr0g3ist.saxumcore.input.ScalingInputHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
 import com.pyr0g3ist.saxumcore.intersect.IntersectionHandler;
 import com.pyr0g3ist.saxumcore.intersect.Intersector;
 import com.pyr0g3ist.saxumcore.intersect.LinearEntityIntersector;
 import com.pyr0g3ist.saxumcore.physics.MomentumIntersectionProcessor;
+import com.pyr0g3ist.saxumcore.ui.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
-public class World implements EntityRegistrar {
+public class Director implements EntityRegistrar {
 
-    private final Rectangle bounds;
+    private final Rectangle worldBounds;
     private final ViewPort viewPort;
     private final ScalingInputHandler inputHandler;
+
     private WorldSpaceInputHandler worldSpaceInputHandler;
-    private Intersector intersector;
+    private LinearEntityIntersector intersector;
+    private MouseProxy mouseProxy;
 
     private final List<Entity> entities = new ArrayList<>();
     private final List<Entity> visibleEntities = new ArrayList<>();
     private final List<Entity> newEntities = new ArrayList<>();
 
+    private final List<Component> components = new ArrayList<>();
+
     public int scrollSpeed = 500;
+    public boolean paused = false;
 
-    public boolean threadsafe = false;
-
-    public World(int worldWidth, int worldHeight, Rectangle viewPortBounds, ScalingInputHandler inputHandler) {
-        this.bounds = new Rectangle(worldWidth, worldHeight);
+    public Director(int worldWidth, int worldHeight, Rectangle viewPortBounds, ScalingInputHandler inputHandler) {
+        this.worldBounds = new Rectangle(worldWidth, worldHeight);
         this.viewPort = new ViewPort(
                 viewPortBounds.x,
                 viewPortBounds.y,
@@ -52,19 +57,38 @@ public class World implements EntityRegistrar {
 
     public void update(double deltaFraction) {
         checkInput();
-        visibleEntities.clear();
+//        Add all new Entities.
         entities.addAll(newEntities);
         newEntities.clear();
+//        Let viewPort populate visible entities.
+        visibleEntities.clear();
+        viewPort.update(deltaFraction);
+//        Intersections with mouseProxy.
+        if (mouseProxy != null) {
+            mouseProxy.setInputHandler(inputHandler);
+            intersector.doIntersectWithList(mouseProxy, components, null);
+            mouseProxy.setInputHandler(getWorldSpaceInputHandler());
+            intersector.doIntersectWithList(mouseProxy, entities, null);
+            mouseProxy.update(deltaFraction);
+        }
+//        Intersections between entities.
         intersector.processIntersections(entities);
+//        Update entities.
         List<Entity> removeList = new ArrayList<>();
         entities.stream().forEach((entity) -> {
             if (entity.needsDisposal()) {
                 removeList.add(entity);
             } else {
-                entity.update(deltaFraction);
+                if (!paused) {
+                    entity.update(deltaFraction);
+                }
             }
         });
-        removeList.stream().forEach(entities::remove);
+        entities.removeAll(removeList);
+//        Update components.
+        components.stream().forEach((component) -> {
+            component.update(deltaFraction);
+        });
     }
 
     private void checkInput() {
@@ -96,25 +120,25 @@ public class World implements EntityRegistrar {
     public void panView(ScrollDirection direction, boolean additiveVelocity) {
         switch (direction) {
             case LEFT:
-                if (viewPort.x < bounds.x) {
+                if (viewPort.x < worldBounds.x) {
                     return;
                 }
                 viewPort.setVelocity(-1, 0, scrollSpeed, additiveVelocity);
                 return;
             case RIGHT:
-                if ((viewPort.x + viewPort.width) > bounds.width) {
+                if ((viewPort.x + viewPort.width) > worldBounds.width) {
                     return;
                 }
                 viewPort.setVelocity(1, 0, scrollSpeed, additiveVelocity);
                 return;
             case UP:
-                if (viewPort.y < bounds.y) {
+                if (viewPort.y < worldBounds.y) {
                     return;
                 }
                 viewPort.setVelocity(0, -1, scrollSpeed, additiveVelocity);
                 return;
             case DOWN:
-                if ((viewPort.y + viewPort.height) > bounds.height) {
+                if ((viewPort.y + viewPort.height) > worldBounds.height) {
                     return;
                 }
                 viewPort.setVelocity(0, 1, scrollSpeed, additiveVelocity);
@@ -132,6 +156,9 @@ public class World implements EntityRegistrar {
             entity.draw(g2, (int) (xOffset - viewPort.x),
                     (int) (yOffset - viewPort.y));
         });
+        components.stream().forEach((component) -> {
+            component.draw(g2, xOffset, yOffset);
+        });
     }
 
     @Override
@@ -139,17 +166,17 @@ public class World implements EntityRegistrar {
         newEntities.add(entity);
     }
 
+    public void registerComponent(Component component) {
+        components.add(component);
+    }
+
 // ===== Getters & Setters =====================================================
 //    
-    public void addEntity(Entity entity) {
-        entities.add(entity);
+    public void setMouseProxy(MouseProxy mouseProxy) {
+        this.mouseProxy = mouseProxy;
     }
 
-    public void addEntities(Entity... entities) {
-        this.entities.addAll(Arrays.asList(entities));
-    }
-
-    public void setIntersector(Intersector intersector) {
+    public void setIntersector(LinearEntityIntersector intersector) {
         this.intersector = intersector;
     }
 
@@ -158,7 +185,7 @@ public class World implements EntityRegistrar {
     }
 
     public Rectangle getBounds() {
-        return bounds;
+        return worldBounds;
     }
 
     public InputHandler getWorldSpaceInputHandler() {
@@ -180,14 +207,15 @@ public class World implements EntityRegistrar {
         }
 
         @Override
-        public void processIntersectionWith(Intersectable intersectable) {
-            if (intersectable instanceof World
-                    || intersectable instanceof World.ViewPort) {
-                return;
-            }
-            intersectionHandlers.stream().forEach((intersectionHandler) -> {
-                intersectionHandler.processIntersectionWith(intersectable);
-            });
+        protected void processIntersections(Set<Intersectable> intersectables) {
+            intersectables.stream()
+                    .filter((intersectable) -> (!(intersectable instanceof Director)
+                            && !(intersectable instanceof Director.ViewPort)))
+                    .forEach((intersectable) -> {
+                        intersectionHandlers.stream().forEach((intersectionHandler) -> {
+                            intersectionHandler.processIntersectionWith(intersectable);
+                        });
+                    });
         }
     }
 // ===== WorldSpaceInputHandler ================================================

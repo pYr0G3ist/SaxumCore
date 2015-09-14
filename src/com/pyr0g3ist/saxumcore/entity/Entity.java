@@ -1,15 +1,23 @@
 package com.pyr0g3ist.saxumcore.entity;
 
 import com.pyr0g3ist.saxumcore.input.InputHandler;
+import com.pyr0g3ist.saxumcore.input.MouseProxy;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
+import com.pyr0g3ist.saxumcore.ui.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 public abstract class Entity implements Intersectable, Disposable {
+
+    private final UUID id;
 
     public double xVelocity = 0;
     public double yVelocity = 0;
@@ -21,7 +29,7 @@ public abstract class Entity implements Intersectable, Disposable {
     public double mass = 0;
     public double drag = 0;
     public boolean visible = true;
-    
+
     public int zIndex;
 
     public List<Intersectable> subIntersectables = new ArrayList<>();
@@ -33,11 +41,14 @@ public abstract class Entity implements Intersectable, Disposable {
     private Point target;
     private Rectangle bounds;
 
+    private final Set<Intersectable> intersections = new HashSet<>();
+
     public Entity(double x, double y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.id = UUID.randomUUID();
     }
 
     public final void update(double deltaFraction) {
@@ -50,6 +61,8 @@ public abstract class Entity implements Intersectable, Disposable {
             applyResistance();
         }
         nullDisposedReferences();
+        processIntersections(intersections);
+        intersections.clear();
         applyLogic(deltaFraction);
     }
 
@@ -165,7 +178,11 @@ public abstract class Entity implements Intersectable, Disposable {
     }
 
     @Override
-    public void processIntersectionWith(Intersectable intersectable) {
+    public final void processIntersectionWith(Intersectable intersectable) {
+        intersections.add(intersectable);
+    }
+
+    protected void processIntersections(Set<Intersectable> intersectables) {
 
     }
 
@@ -186,4 +203,22 @@ public abstract class Entity implements Intersectable, Disposable {
     public void setInputHandler(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Entity other = (Entity) obj;
+        return Objects.equals(this.id, other.id);
+    }
+
 }
