@@ -21,6 +21,8 @@ public abstract class Entity implements Intersectable, Disposable {
     public double mass = 0;
     public double drag = 0;
     public boolean visible = true;
+    
+    public int zIndex;
 
     public List<Intersectable> subIntersectables = new ArrayList<>();
     public EntityRegistrar entityRegistrar;
