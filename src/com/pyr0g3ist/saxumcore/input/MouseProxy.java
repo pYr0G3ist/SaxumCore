@@ -35,18 +35,22 @@ public abstract class MouseProxy extends Entity {
             x = mouse.x;
             y = mouse.y;
         }
+        if (mouseModifier == null) {
+            return;
+        }
         boolean mouseDown = inputHandler.isMouseDown();
         boolean mouseDownChanged = !(mouseDown && mouseWasDown);
-        if (mouseModifier != null) {
-            boolean mouseIsOverModifier = mouseModifier.getBounds().intersects(getBounds());
-            if ((mouseDownChanged || !mouseModified) && mouseIsOverModifier) {
+        boolean mouseIsOverModifier = mouseModifier.getBounds().intersects(getBounds());
+        if (mouseIsOverModifier) {
+            if (!mouseModified || mouseDownChanged) {
                 modifyMouse(mouseModifier, frame, mouseDown);
                 mouseModified = true;
-            } else if (mouseModified && !mouseIsOverModifier) {
-                mouseModified = false;
-                mouseModifier = null;
-                resetMouse();
             }
+        }
+        if (mouseModified && !mouseIsOverModifier) {
+            mouseModified = false;
+            mouseModifier = null;
+            resetMouse();
         }
         mouseWasDown = mouseDown;
     }
@@ -72,12 +76,14 @@ public abstract class MouseProxy extends Entity {
                 topMouseInteractable = interactable;
             }
         }
+        mouseModifier = topMouseInteractable;
         if (inputHandler != null) {
             MouseEvent lastMouseRelease = inputHandler.getLastMouseRelease();
             if (lastMouseRelease != null && mouseModifier != null) {
                 mouseModifier.setClickOccurred(lastMouseRelease.getButton());
             }
         }
+        itemsUnderMouse.clear();
     }
 
     private void resetMouse() {
