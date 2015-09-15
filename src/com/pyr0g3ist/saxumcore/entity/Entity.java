@@ -1,9 +1,7 @@
 package com.pyr0g3ist.saxumcore.entity;
 
 import com.pyr0g3ist.saxumcore.input.InputHandler;
-import com.pyr0g3ist.saxumcore.input.MouseProxy;
 import com.pyr0g3ist.saxumcore.intersect.Intersectable;
-import com.pyr0g3ist.saxumcore.ui.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;

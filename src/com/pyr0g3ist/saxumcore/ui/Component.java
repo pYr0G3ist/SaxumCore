@@ -14,7 +14,8 @@ public class Component extends Entity implements MouseInteractable {
 
     public ClickIndex clickIndex = ClickIndex.UI_INDEX;
 
-    protected int clickButton;
+    protected int clickButton = 0;
+    protected boolean mouseOver = false;
 
     public Component(double x, double y, int width, int height) {
         super(x, y, width, height);
@@ -32,12 +33,10 @@ public class Component extends Entity implements MouseInteractable {
         if (backgroundImage != null) {
             g2.drawImage(backgroundImage, null, 0, 0);
         }
-        g2.setColor(Color.red);
-        g2.drawString("X:" + x, 10, 10);
-        g2.drawString("Y:" + y, 10, 30);
-        g2.drawString("M:" + clickButton, 10, 50);
     }
 
+//    ===== MouseInteractable ==================================================
+//    
     @Override
     public ClickIndex getClickIndex() {
         return clickIndex;
@@ -46,6 +45,11 @@ public class Component extends Entity implements MouseInteractable {
     @Override
     public void setClickOccurred(int button) {
         clickButton = button;
+    }
+
+    @Override
+    public void setMouseOver(boolean mouseOver) {
+        this.mouseOver = mouseOver;
     }
 
 }
