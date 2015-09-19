@@ -31,7 +31,7 @@ public abstract class Entity implements Intersectable, Disposable {
     public int zIndex;
 
     public List<Intersectable> subIntersectables = new ArrayList<>();
-    public EntityRegistrar entityRegistrar;
+    public EntityManager entityRegistrar;
     protected InputHandler inputHandler;
 
     private boolean disposeLater = false;

@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 public class Core {
 
 //===== Properties =============================================================
+//    
     protected int updateRate = 200;
     private int updateInterval = 1000000000 / updateRate;
     protected boolean running = true;
@@ -27,10 +28,12 @@ public class Core {
     private long fps = 0;
 
 //===== Components =============================================================
+//    
     private final DrawRenderer renderer = new DrawRenderer();
     protected final RenderFrame frame;
     protected final ScalingInputHandler inputHandler;
 //===== Constructors ===========================================================
+//    
 
     public Core(int width, int height) {
         frame = new RenderFrame(
@@ -48,7 +51,14 @@ public class Core {
     }
 
 //===== Core Methods ===========================================================
+//    
+    protected void init() {
+
+    }
+
     public final void startLoop() {
+        init();
+
         frame.display(true, false);
 
         long loopStartTime = System.nanoTime();
@@ -98,7 +108,7 @@ public class Core {
     }
 
     protected void update(double deltaFraction) {
-        
+
     }
 
     protected void draw(Graphics2D g2) {
@@ -133,7 +143,8 @@ public class Core {
         }
     }
 
-//===== Member Access ==========================================================
+//===== Getters & Setters ==========================================================
+//    
     public void setUpdateRate(int updateRate) {
         this.updateRate = updateRate;
         updateInterval = 1000000000 / updateRate;

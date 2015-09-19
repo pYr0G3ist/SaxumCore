@@ -19,7 +19,6 @@ public class Component extends Entity implements MouseInteractable {
 
     public Component(double x, double y, int width, int height) {
         super(x, y, width, height);
-        zIndex = 10;
     }
 
 //    ===== Entity =============================================================
