@@ -93,6 +93,7 @@ public class Director implements EntityManager, ComponentManager {
 //        Update components.
         components.stream().forEach((component) -> {
             component.update(deltaFraction);
+            component.setMouseOver(false);
         });
         components.removeAll(removeComponents);
     }
