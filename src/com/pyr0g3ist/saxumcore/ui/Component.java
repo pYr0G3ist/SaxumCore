@@ -1,7 +1,6 @@
 package com.pyr0g3ist.saxumcore.ui;
 
 import com.pyr0g3ist.saxumcore.entity.Entity;
-import com.pyr0g3ist.saxumcore.input.ClickIndex;
 import com.pyr0g3ist.saxumcore.input.MouseInteractable;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,7 +11,7 @@ public class Component extends Entity implements MouseInteractable {
     public Color backgroundColor;
     public BufferedImage backgroundImage;
 
-    public ClickIndex clickIndex = ClickIndex.UI_INDEX;
+    public int clickIndex;
 
     protected int clickButton = 0;
     protected boolean mouseOver = false;
@@ -37,7 +36,7 @@ public class Component extends Entity implements MouseInteractable {
 //    ===== MouseInteractable ==================================================
 //    
     @Override
-    public ClickIndex getClickIndex() {
+    public int getClickIndex() {
         return clickIndex;
     }
 

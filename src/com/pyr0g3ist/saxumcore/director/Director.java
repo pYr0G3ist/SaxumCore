@@ -16,6 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -85,6 +86,7 @@ public class Director implements EntityManager, ComponentManager {
                     entity.update(deltaFraction);
                     if (entity instanceof MouseInteractable) {
                         ((MouseInteractable) entity).setMouseOver(false);
+                        ((MouseInteractable) entity).setClickOccurred(MouseEvent.NOBUTTON);
                     }
                 }
             }
@@ -94,6 +96,7 @@ public class Director implements EntityManager, ComponentManager {
         components.stream().forEach((component) -> {
             component.update(deltaFraction);
             component.setMouseOver(false);
+            component.setClickOccurred(MouseEvent.NOBUTTON);
         });
         components.removeAll(removeComponents);
     }
@@ -212,6 +215,10 @@ public class Director implements EntityManager, ComponentManager {
             worldSpaceInputHandler = new WorldSpaceInputHandler(inputHandler);
         }
         return worldSpaceInputHandler;
+    }
+    
+    public int getManagedObjectsCount() {
+        return components.size() + entities.size();
     }
 
 // ===== ViewPort ==============================================================

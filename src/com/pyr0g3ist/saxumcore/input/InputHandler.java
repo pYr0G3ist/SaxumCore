@@ -70,15 +70,11 @@ public class InputHandler {
 
         @Override
         public void mousePressed(MouseEvent evt) {
-            mouse.x = evt.getPoint().x;
-            mouse.y = evt.getPoint().y;
             mouseDown = true;
         }
 
         @Override
         public void mouseReleased(MouseEvent evt) {
-            mouse.x = evt.getPoint().x;
-            mouse.y = evt.getPoint().y;
             mouseDown = false;
             lastMouseRelease = evt;
             Point correctedPoint = getMouse();
@@ -130,7 +126,9 @@ public class InputHandler {
         return keyQueue.toString();
     }
 
-    public MouseEvent getLastMouseRelease() {
-        return lastMouseRelease;
+    public MouseEvent consumeLastMouseRelease() {
+        MouseEvent returnEvent = lastMouseRelease;
+        lastMouseRelease = null;
+        return returnEvent;
     }
 }

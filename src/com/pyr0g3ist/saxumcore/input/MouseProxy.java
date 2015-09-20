@@ -86,12 +86,12 @@ public abstract class MouseProxy extends Entity {
         for (MouseInteractable interactable : itemsUnderMouse) {
             interactable.setClickOccurred(MouseEvent.NOBUTTON);
             interactable.setMouseOver(true);
-            if (interactable.getClickIndex().isHigherThan(topMouseInteractable.getClickIndex())) {
+            if (interactable.getClickIndex() > topMouseInteractable.getClickIndex()) {
                 topMouseInteractable = interactable;
             }
         }
         mouseModifier = topMouseInteractable;
-        MouseEvent lastMouseRelease = inputHandler.getLastMouseRelease();
+        MouseEvent lastMouseRelease = inputHandler.consumeLastMouseRelease();
         if (lastMouseRelease != null && mouseModifier != null) {
             mouseModifier.setClickOccurred(lastMouseRelease.getButton());
         }

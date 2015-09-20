@@ -43,4 +43,8 @@ public class Button extends Component {
         return state;
     }
 
+    public void setAction(Runnable action) {
+        this.action = action;
+    }
+
 }
