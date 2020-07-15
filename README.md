@@ -1,3 +1,3 @@
 # SaxumCore
 
-A Java2D implementation of a basic game framework.
+Another Java 2D game engine.
